@@ -1,0 +1,3034 @@
+```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+#sns.set(style='darkgrid')
+sns.set()
+%matplotlib inline
+```
+
+
+```python
+train= pd.read_csv("./data/train.csv")
+test=pd.read_csv("./data/test.csv")
+train.head(5)
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>PassengerId</th>
+      <th>Survived</th>
+      <th>Pclass</th>
+      <th>Name</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>female</td>
+      <td>35.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>male</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+test.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>PassengerId</th>
+      <th>Pclass</th>
+      <th>Name</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>892</td>
+      <td>3</td>
+      <td>Kelly, Mr. James</td>
+      <td>male</td>
+      <td>34.5</td>
+      <td>0</td>
+      <td>0</td>
+      <td>330911</td>
+      <td>7.8292</td>
+      <td>NaN</td>
+      <td>Q</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>893</td>
+      <td>3</td>
+      <td>Wilkes, Mrs. James (Ellen Needs)</td>
+      <td>female</td>
+      <td>47.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>363272</td>
+      <td>7.0000</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>894</td>
+      <td>2</td>
+      <td>Myles, Mr. Thomas Francis</td>
+      <td>male</td>
+      <td>62.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>240276</td>
+      <td>9.6875</td>
+      <td>NaN</td>
+      <td>Q</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>895</td>
+      <td>3</td>
+      <td>Wirz, Mr. Albert</td>
+      <td>male</td>
+      <td>27.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>315154</td>
+      <td>8.6625</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>896</td>
+      <td>3</td>
+      <td>Hirvonen, Mrs. Alexander (Helga E Lindqvist)</td>
+      <td>female</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>3101298</td>
+      <td>12.2875</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+train.shape
+```
+
+
+
+
+    (891, 12)
+
+
+
+
+```python
+test.shape
+```
+
+
+
+
+    (418, 11)
+
+
+
+
+```python
+train.info()
+#빠진정보는 유실된 정보이다
+```
+
+    <class 'pandas.core.frame.DataFrame'>
+    RangeIndex: 891 entries, 0 to 890
+    Data columns (total 12 columns):
+     #   Column       Non-Null Count  Dtype  
+    ---  ------       --------------  -----  
+     0   PassengerId  891 non-null    int64  
+     1   Survived     891 non-null    int64  
+     2   Pclass       891 non-null    int64  
+     3   Name         891 non-null    object 
+     4   Sex          891 non-null    object 
+     5   Age          714 non-null    float64
+     6   SibSp        891 non-null    int64  
+     7   Parch        891 non-null    int64  
+     8   Ticket       891 non-null    object 
+     9   Fare         891 non-null    float64
+     10  Cabin        204 non-null    object 
+     11  Embarked     889 non-null    object 
+    dtypes: float64(2), int64(5), object(5)
+    memory usage: 83.7+ KB
+    
+
+
+```python
+test.info()
+```
+
+    <class 'pandas.core.frame.DataFrame'>
+    RangeIndex: 418 entries, 0 to 417
+    Data columns (total 11 columns):
+     #   Column       Non-Null Count  Dtype  
+    ---  ------       --------------  -----  
+     0   PassengerId  418 non-null    int64  
+     1   Pclass       418 non-null    int64  
+     2   Name         418 non-null    object 
+     3   Sex          418 non-null    object 
+     4   Age          332 non-null    float64
+     5   SibSp        418 non-null    int64  
+     6   Parch        418 non-null    int64  
+     7   Ticket       418 non-null    object 
+     8   Fare         417 non-null    float64
+     9   Cabin        91 non-null     object 
+     10  Embarked     418 non-null    object 
+    dtypes: float64(2), int64(4), object(5)
+    memory usage: 36.0+ KB
+    
+
+
+```python
+train.isnull().sum()
+```
+
+
+
+
+    PassengerId      0
+    Survived         0
+    Pclass           0
+    Name             0
+    Sex              0
+    Age            177
+    SibSp            0
+    Parch            0
+    Ticket           0
+    Fare             0
+    Cabin          687
+    Embarked         2
+    dtype: int64
+
+
+
+
+```python
+test.isnull().sum(
+)
+```
+
+
+
+
+    PassengerId      0
+    Pclass           0
+    Name             0
+    Sex              0
+    Age             86
+    SibSp            0
+    Parch            0
+    Ticket           0
+    Fare             1
+    Cabin          327
+    Embarked         0
+    dtype: int64
+
+
+
+
+```python
+def bar_chart(feature):
+    survived= train[train['Survived']==1][feature].value_counts()
+    dead= train[train['Survived']==0][feature].value_counts()
+    df= pd.DataFrame([survived,dead])
+    df.index= ['Survived','Dead']
+    df.plot(kind='bar',stacked=True, figsize=(10,5))
+```
+
+
+```python
+bar_chart('Sex')
+#여자가 더 생존함
+```
+
+
+    
+![png](output_10_0.png)
+    
+
+
+
+```python
+bar_chart('Pclass')
+#1등석이 3등석보다 많이 살아남음
+```
+
+
+    
+![png](output_11_0.png)
+    
+
+
+
+```python
+bar_chart('SibSp')
+#혼자간 경우보다 가족이랑 같이 간 경우 더 살아남음
+```
+
+
+    
+![png](output_12_0.png)
+    
+
+
+
+```python
+bar_chart('Parch')
+#자녀가 있는경우 더 살아남았음
+```
+
+
+    
+![png](output_13_0.png)
+    
+
+
+
+```python
+bar_chart('Embarked')
+#선착장에따른 생존여부는 큰의미가 없음
+```
+
+
+    
+![png](output_14_0.png)
+    
+
+
+# 이름
+
+
+```python
+train_test_data=[train,test]
+
+for dataset in train_test_data:
+    dataset['Title']=dataset['Name'].str.extract('([A-Za-z]+)\.',expand=False)
+```
+
+
+```python
+train['Title'].value_counts()
+```
+
+
+
+
+    Mr          517
+    Miss        182
+    Mrs         125
+    Master       40
+    Dr            7
+    Rev           6
+    Col           2
+    Major         2
+    Mlle          2
+    Jonkheer      1
+    Mme           1
+    Sir           1
+    Capt          1
+    Countess      1
+    Lady          1
+    Ms            1
+    Don           1
+    Name: Title, dtype: int64
+
+
+
+
+```python
+title_mapping = {"Mr":0, "Miss":1,"Mrs":2,"Master":3, "Dr":3,"Col":3,"Major":3,"Mlle":3,"Countess":3,"Ms":3,"Lady":3,"Jonkheer":3,"Don":3,
+                "Dona":3,"Mme":3,"Capt":3,"Sir":3}
+for dataset in train_test_data:
+    dataset['Title']=dataset['Title'].map(title_mapping)
+    #매핑(mapping)은 키(key) 역할을 하는 데이터와 값(value) 역할을 하는 데이터를 하나씩 짝지어 저장하는 데이터 구조다.
+    #딕셔너리 를 생각하면 된다.
+```
+
+
+```python
+train.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>PassengerId</th>
+      <th>Survived</th>
+      <th>Pclass</th>
+      <th>Name</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+      <th>Title</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>female</td>
+      <td>35.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>S</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>male</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+bar_chart('Title')
+```
+
+
+    
+![png](output_20_0.png)
+    
+
+
+
+```python
+train.drop('Name',axis=1,inplace=True)
+test.drop('Name',axis=1, inplace=True)
+```
+
+
+```python
+train.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>PassengerId</th>
+      <th>Survived</th>
+      <th>Pclass</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+      <th>Title</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>female</td>
+      <td>35.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>S</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>male</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+test.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>PassengerId</th>
+      <th>Pclass</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+      <th>Title</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>892</td>
+      <td>3</td>
+      <td>male</td>
+      <td>34.5</td>
+      <td>0</td>
+      <td>0</td>
+      <td>330911</td>
+      <td>7.8292</td>
+      <td>NaN</td>
+      <td>Q</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>893</td>
+      <td>3</td>
+      <td>female</td>
+      <td>47.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>363272</td>
+      <td>7.0000</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>894</td>
+      <td>2</td>
+      <td>male</td>
+      <td>62.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>240276</td>
+      <td>9.6875</td>
+      <td>NaN</td>
+      <td>Q</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>895</td>
+      <td>3</td>
+      <td>male</td>
+      <td>27.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>315154</td>
+      <td>8.6625</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>896</td>
+      <td>3</td>
+      <td>female</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>3101298</td>
+      <td>12.2875</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>2.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+# 성별
+
+
+```python
+sex_mapping= {"male":0, "female":1}
+for dataset in train_test_data:
+    dataset['Sex']=dataset['Sex'].map(sex_mapping)
+     #구문함수 이해 잘하기/반목문 딕셔너리(가변함수)
+```
+
+
+```python
+bar_chart('Sex')
+```
+
+
+    
+![png](output_26_0.png)
+    
+
+
+# 빈자리의 평균나이 구하기
+
+
+```python
+train.head(100)
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>PassengerId</th>
+      <th>Survived</th>
+      <th>Pclass</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+      <th>Title</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>35.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>S</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>95</th>
+      <td>96</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>0</td>
+      <td>374910</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>96</th>
+      <td>97</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>71.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>PC 17754</td>
+      <td>34.6542</td>
+      <td>A5</td>
+      <td>C</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>97</th>
+      <td>98</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>23.0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>PC 17759</td>
+      <td>63.3583</td>
+      <td>D10 D12</td>
+      <td>C</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>98</th>
+      <td>99</td>
+      <td>1</td>
+      <td>2</td>
+      <td>1</td>
+      <td>34.0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>231919</td>
+      <td>23.0000</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>99</th>
+      <td>100</td>
+      <td>0</td>
+      <td>2</td>
+      <td>0</td>
+      <td>34.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>244367</td>
+      <td>26.0000</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>100 rows × 12 columns</p>
+</div>
+
+
+
+nan으로 비어있는 부분을 성별/결혼여부에 따라 그에따른 평균으로 나타내기
+
+
+```python
+# fill missing age  with median age for each title(Mr, Mrs,Miss,others)
+train["Age"].fillna(train.groupby("Title")["Age"].transform("median"),inplace=True)
+test["Age"].fillna(test.groupby("Title")["Age"].transform("median"),inplace=True)
+```
+
+
+```python
+facet = sns.FacetGrid(train, hue="Survived", aspect=4)
+facet.map(sns.kdeplot,'Age',shade=True)
+facet.set(xlim=(0, train['Age'].max()))
+facet.add_legend()
+
+plt.show()
+```
+
+
+    
+![png](output_31_0.png)
+    
+
+
+1.커널 밀도 추정(KDE: Kernel Density Estimator)이란??
+쉽게 얘기하면 히스토그램 같은 분포를 스무딩~ 부드럽게 곡선화(?) 시켜서 그려주는 거다 +shade: 곡선 아래의 공간을 음영 처리할지 결정 (True/False)
+2.FacetGrid(data, row, col, hue) : 다중 플롯 그리드를 만들어서 여러가지 쌍 관계를 표현하기 위한 그리드 Class이다. 도화지에 축을 나누는것과 같다. 
+
+
+
+```python
+facet=sns.FacetGrid(train, hue="Survived",aspect=4)
+facet.map(sns.kdeplot,'Age',shade=True)
+facet.set(xlim=(0,train['Age'].max()))
+facet.add_legend()
+plt.xlim(0,20)
+#0~20세까지의 생존그래프
+```
+
+
+
+
+    (0.0, 20.0)
+
+
+
+
+    
+![png](output_33_1.png)
+    
+
+
+
+```python
+facet=sns.FacetGrid(train, hue="Survived",aspect=4)
+facet.map(sns.kdeplot,'Age',shade=True)
+facet.set(xlim=(0,train['Age'].max()))
+facet.add_legend()
+plt.xlim(20,30)
+#20~30세까지의 생존그래프
+```
+
+
+
+
+    (20.0, 30.0)
+
+
+
+
+    
+![png](output_34_1.png)
+    
+
+
+
+```python
+facet=sns.FacetGrid(train, hue="Survived",aspect=4)
+facet.map(sns.kdeplot,'Age',shade=True)
+facet.set(xlim=(0,train['Age'].max()))
+facet.add_legend()
+plt.xlim(30,40)
+#30~40세까지의 생존그래프
+```
+
+
+
+
+    (30.0, 40.0)
+
+
+
+
+    
+![png](output_35_1.png)
+    
+
+
+
+```python
+facet=sns.FacetGrid(train, hue="Survived",aspect=4)
+facet.map(sns.kdeplot,'Age',shade=True)
+facet.set(xlim=(0,train['Age'].max()))
+facet.add_legend()
+plt.xlim(40,train['Age'].max())
+#40~나머지 까지의 생존그래프
+```
+
+
+
+
+    (40.0, 80.0)
+
+
+
+
+    
+![png](output_36_1.png)
+    
+
+
+
+```python
+train.info()
+```
+
+    <class 'pandas.core.frame.DataFrame'>
+    RangeIndex: 891 entries, 0 to 890
+    Data columns (total 12 columns):
+     #   Column       Non-Null Count  Dtype  
+    ---  ------       --------------  -----  
+     0   PassengerId  891 non-null    int64  
+     1   Survived     891 non-null    int64  
+     2   Pclass       891 non-null    int64  
+     3   Sex          891 non-null    int64  
+     4   Age          891 non-null    float64
+     5   SibSp        891 non-null    int64  
+     6   Parch        891 non-null    int64  
+     7   Ticket       891 non-null    object 
+     8   Fare         891 non-null    float64
+     9   Cabin        204 non-null    object 
+     10  Embarked     889 non-null    object 
+     11  Title        885 non-null    float64
+    dtypes: float64(3), int64(6), object(3)
+    memory usage: 83.7+ KB
+    
+
+
+```python
+test.info()
+```
+
+    <class 'pandas.core.frame.DataFrame'>
+    RangeIndex: 418 entries, 0 to 417
+    Data columns (total 11 columns):
+     #   Column       Non-Null Count  Dtype  
+    ---  ------       --------------  -----  
+     0   PassengerId  418 non-null    int64  
+     1   Pclass       418 non-null    int64  
+     2   Sex          418 non-null    int64  
+     3   Age          418 non-null    float64
+     4   SibSp        418 non-null    int64  
+     5   Parch        418 non-null    int64  
+     6   Ticket       418 non-null    object 
+     7   Fare         417 non-null    float64
+     8   Cabin        91 non-null     object 
+     9   Embarked     418 non-null    object 
+     10  Title        416 non-null    float64
+    dtypes: float64(3), int64(5), object(3)
+    memory usage: 36.0+ KB
+    
+
+# binning
+
+# 문제가해결이안됨!!!
+
+child:0
+young:1
+adult:2
+mid-age:3
+senior:4
+
+
+```python
+for dataset in train_test_data:
+    dataset.loc[dataset['Age']<=16, 'Age']=0
+    dataset.loc[(dataset['Age'] > 16) & (dataset['Age'] <= 26), 'Age'] = 1
+    dataset.loc[(dataset['Age'] > 26) & (dataset['Age'] <= 36), 'Age'] = 2
+    dataset.loc[(dataset['Age'] > 36) & (dataset['Age'] <= 62), 'Age'] = 3
+    dataset.loc[ dataset['Age'] > 62, 'Age'] = 4
+    
+    #영상과 달리쉼표를 제거해야 한다
+```
+
+
+```python
+train.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>PassengerId</th>
+      <th>Survived</th>
+      <th>Pclass</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+      <th>Title</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>2.0</td>
+      <td>C85</td>
+      <td>NaN</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>2.0</td>
+      <td>C123</td>
+      <td>NaN</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+bar_chart('Age')
+#이 문제는해결이안됨!!!!
+```
+
+
+    
+![png](output_44_0.png)
+    
+
+
+# Embarked 어디서 탔는지
+
+
+```python
+Pclass1 = train[train['Pclass']==1]['Embarked'].value_counts()
+Pclass2 = train[train['Pclass']==2]['Embarked'].value_counts()
+Pclass3 = train[train['Pclass']==3]['Embarked'].value_counts()
+df = pd.DataFrame([Pclass1, Pclass2, Pclass3])
+df.index = ['1st class','2nd class', '3rd class']
+df.plot(kind='bar',stacked=True, figsize=(10,5))
+```
+
+
+
+
+    <AxesSubplot:>
+
+
+
+
+    
+![png](output_46_1.png)
+    
+
+
+q에탄 사람들이 3등석이 대부분 차지하므로 더 많이 죽었을것으로 예상된다.
+
+
+```python
+for dataset in train_test_data:
+    dataset['Embarked'] = dataset['Embarked'].fillna('S')
+```
+
+
+```python
+train.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>PassengerId</th>
+      <th>Survived</th>
+      <th>Pclass</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+      <th>Title</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>S</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+embarked_mapping = {"S": 0, "C": 1, "Q": 2}
+for dataset in train_test_data:
+    dataset['Embarked'] = dataset['Embarked'].map(embarked_mapping)
+
+```
+
+# fare 티켓가격에 따른 생존여부
+
+
+```python
+# fill missing Fare with median fare for each Pclass
+train["Fare"].fillna(train.groupby("Pclass")["Fare"].transform("median"), inplace=True)
+test["Fare"].fillna(test.groupby("Pclass")["Fare"].transform("median"), inplace=True)
+train.head(50)
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>PassengerId</th>
+      <th>Survived</th>
+      <th>Pclass</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+      <th>Title</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>NaN</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>NaN</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>6</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>330877</td>
+      <td>8.4583</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>7</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>17463</td>
+      <td>51.8625</td>
+      <td>E46</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>8</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>349909</td>
+      <td>21.0750</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>9</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>2</td>
+      <td>347742</td>
+      <td>11.1333</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>10</td>
+      <td>1</td>
+      <td>2</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>237736</td>
+      <td>30.0708</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>11</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>PP 9549</td>
+      <td>16.7000</td>
+      <td>G6</td>
+      <td>NaN</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>12</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>113783</td>
+      <td>26.5500</td>
+      <td>C103</td>
+      <td>NaN</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>13</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>A/5. 2151</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>14</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>5</td>
+      <td>347082</td>
+      <td>31.2750</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>15</td>
+      <td>0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>350406</td>
+      <td>7.8542</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>16</td>
+      <td>1</td>
+      <td>2</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>248706</td>
+      <td>16.0000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>17</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>4</td>
+      <td>1</td>
+      <td>382652</td>
+      <td>29.1250</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>18</td>
+      <td>1</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>244373</td>
+      <td>13.0000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>19</td>
+      <td>0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>345763</td>
+      <td>18.0000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>20</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>2649</td>
+      <td>7.2250</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>21</td>
+      <td>0</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>239865</td>
+      <td>26.0000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>22</td>
+      <td>1</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>248698</td>
+      <td>13.0000</td>
+      <td>D56</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>23</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>330923</td>
+      <td>8.0292</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>24</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>113788</td>
+      <td>35.5000</td>
+      <td>A6</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>25</td>
+      <td>0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>349909</td>
+      <td>21.0750</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>26</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>5</td>
+      <td>347077</td>
+      <td>31.3875</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>27</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>2631</td>
+      <td>7.2250</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>28</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>3</td>
+      <td>2</td>
+      <td>19950</td>
+      <td>263.0000</td>
+      <td>C23 C25 C27</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>29</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>330959</td>
+      <td>7.8792</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>30</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>349216</td>
+      <td>7.8958</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>31</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>PC 17601</td>
+      <td>27.7208</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>31</th>
+      <td>32</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17569</td>
+      <td>146.5208</td>
+      <td>B78</td>
+      <td>NaN</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>32</th>
+      <td>33</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>335677</td>
+      <td>7.7500</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>33</th>
+      <td>34</td>
+      <td>0</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>C.A. 24579</td>
+      <td>10.5000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>34</th>
+      <td>35</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17604</td>
+      <td>82.1708</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>35</th>
+      <td>36</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113789</td>
+      <td>52.0000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>36</th>
+      <td>37</td>
+      <td>1</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>2677</td>
+      <td>7.2292</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>37</th>
+      <td>38</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>A./5. 2152</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>38</th>
+      <td>39</td>
+      <td>0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>2</td>
+      <td>0</td>
+      <td>345764</td>
+      <td>18.0000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>39</th>
+      <td>40</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>2651</td>
+      <td>11.2417</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>40</th>
+      <td>41</td>
+      <td>0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>7546</td>
+      <td>9.4750</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>41</th>
+      <td>42</td>
+      <td>0</td>
+      <td>2</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>11668</td>
+      <td>21.0000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>42</th>
+      <td>43</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>349253</td>
+      <td>7.8958</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>43</th>
+      <td>44</td>
+      <td>1</td>
+      <td>2</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>2</td>
+      <td>SC/Paris 2123</td>
+      <td>41.5792</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>44</th>
+      <td>45</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>330958</td>
+      <td>7.8792</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>45</th>
+      <td>46</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>S.C./A.4. 23567</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>46</th>
+      <td>47</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>370371</td>
+      <td>15.5000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>47</th>
+      <td>48</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>14311</td>
+      <td>7.7500</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>48</th>
+      <td>49</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>2</td>
+      <td>0</td>
+      <td>2662</td>
+      <td>21.6792</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>49</th>
+      <td>50</td>
+      <td>0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>349237</td>
+      <td>17.8000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+facet = sns.FacetGrid(train, hue="Survived",aspect=4)
+facet.map(sns.kdeplot,'Fare',shade= True)
+facet.set(xlim=(0, train['Fare'].max()))
+facet.add_legend()
+ 
+plt.show()
+
+```
+
+
+    
+![png](output_53_0.png)
+    
+
+
+
+```python
+facet = sns.FacetGrid(train, hue="Survived",aspect=4)
+facet.map(sns.kdeplot,'Fare',shade= True)
+facet.set(xlim=(0, train['Fare'].max()))
+facet.add_legend()
+plt.xlim(0, 20)
+```
+
+
+
+
+    (0.0, 20.0)
+
+
+
+
+    
+![png](output_54_1.png)
+    
+
+
+
+```python
+facet = sns.FacetGrid(train, hue="Survived",aspect=4)
+facet.map(sns.kdeplot,'Fare',shade= True)
+facet.set(xlim=(0, train['Fare'].max()))
+facet.add_legend()
+plt.xlim(0, 30)
+```
+
+
+
+
+    (0.0, 30.0)
+
+
+
+
+    
+![png](output_55_1.png)
+    
+
+
+
+```python
+facet = sns.FacetGrid(train, hue="Survived",aspect=4)
+facet.map(sns.kdeplot,'Fare',shade= True)
+facet.set(xlim=(0, train['Fare'].max()))
+facet.add_legend()
+plt.xlim(0)
+```
+
+
+
+
+    (0.0, 512.3292)
+
+
+
+
+    
+![png](output_56_1.png)
+    
+
+
+
+```python
+for dataset in train_test_data:
+    dataset.loc[ dataset['Fare'] <= 17, 'Fare'] = 0
+    dataset.loc[(dataset['Fare'] > 17) & (dataset['Fare'] <= 30), 'Fare'] = 1
+    dataset.loc[(dataset['Fare'] > 30) & (dataset['Fare'] <= 100), 'Fare'] = 2
+    dataset.loc[ dataset['Fare'] > 100, 'Fare'] = 3
+```
+
+
+```python
+train.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>PassengerId</th>
+      <th>Survived</th>
+      <th>Pclass</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+      <th>Title</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>2.0</td>
+      <td>C85</td>
+      <td>NaN</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>2.0</td>
+      <td>C123</td>
+      <td>NaN</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+# cabin
+
+
+```python
+train.Cabin.value_counts()
+```
+
+
+
+
+    C23 C25 C27    4
+    B96 B98        4
+    G6             4
+    F33            3
+    C22 C26        3
+                  ..
+    E63            1
+    D37            1
+    B39            1
+    B4             1
+    C90            1
+    Name: Cabin, Length: 147, dtype: int64
+
+
+
+
+```python
+for dataset in train_test_data:
+    dataset['Cabin'] = dataset['Cabin'].str[:1]
+```
+
+
+```python
+Pclass1 = train[train['Pclass']==1]['Cabin'].value_counts()
+Pclass2 = train[train['Pclass']==2]['Cabin'].value_counts()
+Pclass3 = train[train['Pclass']==3]['Cabin'].value_counts()
+df = pd.DataFrame([Pclass1, Pclass2, Pclass3])
+df.index = ['1st class','2nd class', '3rd class']
+df.plot(kind='bar',stacked=True, figsize=(10,5))
+```
+
+
+
+
+    <AxesSubplot:>
+
+
+
+
+    
+![png](output_62_1.png)
+    
+
+
+
+```python
+cabin_mapping = {"A": 0, "B": 0.4, "C": 0.8, "D": 1.2, "E": 1.6, "F": 2, "G": 2.4, "T": 2.8}
+for dataset in train_test_data:
+    dataset['Cabin'] = dataset['Cabin'].map(cabin_mapping)
+    #가격차이가(10달러차이) 남녀차이(남1,여0)를 방지하기위해 차이를 소수점으로 나타내기
+```
+
+
+```python
+# fill missing Fare with median fare for each Pclass
+train["Cabin"].fillna(train.groupby("Pclass")["Cabin"].transform("median"), inplace=True)
+test["Cabin"].fillna(test.groupby("Pclass")["Cabin"].transform("median"), inplace=True)
+```
+
+# familysize
+
+
+```python
+train["FamilySize"] = train["SibSp"] + train["Parch"] + 1
+test["FamilySize"] = test["SibSp"] + test["Parch"] + 1
+```
+
+
+```python
+facet = sns.FacetGrid(train, hue="Survived",aspect=4)
+facet.map(sns.kdeplot,'FamilySize',shade= True)
+facet.set(xlim=(0, train['FamilySize'].max()))
+facet.add_legend()
+plt.xlim(0)
+```
+
+
+
+
+    (0.0, 11.0)
+
+
+
+
+    
+![png](output_67_1.png)
+    
+
+
+
+```python
+family_mapping = {1: 0, 2: 0.4, 3: 0.8, 4: 1.2, 5: 1.6, 6: 2, 7: 2.4, 8: 2.8, 9: 3.2, 10: 3.6, 11: 4}
+for dataset in train_test_data:
+    dataset['FamilySize'] = dataset['FamilySize'].map(family_mapping)
+```
+
+
+```python
+train.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>PassengerId</th>
+      <th>Survived</th>
+      <th>Pclass</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+      <th>Title</th>
+      <th>FamilySize</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>0.4</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>2.0</td>
+      <td>0.8</td>
+      <td>NaN</td>
+      <td>2.0</td>
+      <td>0.4</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>2.0</td>
+      <td>0.8</td>
+      <td>NaN</td>
+      <td>2.0</td>
+      <td>0.4</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+features_drop = ['Ticket', 'SibSp', 'Parch']
+train = train.drop(features_drop, axis=1)
+test = test.drop(features_drop, axis=1)
+train = train.drop(['PassengerId'], axis=1)
+```
+
+
+```python
+train_data = train.drop('Survived', axis=1)
+target = train['Survived']
+
+train_data.shape, target.shape
+```
+
+
+
+
+    ((891, 8), (891,))
+
+
+
+
+```python
+train_data.head(10)
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Pclass</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+      <th>Title</th>
+      <th>FamilySize</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>0.4</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>0.8</td>
+      <td>NaN</td>
+      <td>2.0</td>
+      <td>0.4</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>0.8</td>
+      <td>NaN</td>
+      <td>2.0</td>
+      <td>0.4</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>1</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>1.6</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>NaN</td>
+      <td>3.0</td>
+      <td>1.6</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>NaN</td>
+      <td>2.0</td>
+      <td>0.8</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>2</td>
+      <td>1</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>1.8</td>
+      <td>NaN</td>
+      <td>2.0</td>
+      <td>0.4</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+
+```
